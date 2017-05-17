@@ -2,6 +2,11 @@
 var path = require('path')
 
 module.exports = {
+  moduleName:'views',
+  pathString:{
+    root: path.resolve(__dirname, '../'),//得到的全部是/这样的绝对路径
+    src: path.resolve(__dirname, '../src')
+  },
   build: {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),

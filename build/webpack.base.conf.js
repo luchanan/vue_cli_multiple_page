@@ -2,15 +2,14 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
-
+// 返回绝对路径
+var entries =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.js');
 function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+  return path.join(__dirname, '..', dir)//得到的全部是\这样的绝对路径
 }
 
 module.exports = {
-  entry: {
-    app: './src/main.js'
-  },
+  entry:entries,
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',

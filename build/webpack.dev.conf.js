@@ -25,11 +25,21 @@ module.exports = merge(baseWebpackConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({
+    /*new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
       inject: true
-    }),
+    }),*/
     new FriendlyErrorsPlugin()
   ]
 })
+var pages =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.html');
+for (var pathname in pages) {
+  var conf = {
+    filename: pathname + '.html',
+    template: pages[pathname],
+    chunks: [pathname, 'vendors', 'manifest'],
+    inject: true
+  };
+  module.exports.plugins.push(new HtmlWebpackPlugin(conf));
+}

@@ -1,0 +1,72 @@
+### 如何在vue-cli单页面的基础上去改造为多页面（实际是多页spa组合）？
+
+- 去掉根目录index.html
+- 去掉src下的router，App.vue，main.js
+
+改写
+- build/webpack.base.conf.js
+
+```
+//由原来一个入口
+module.exports = {
+  entry: {
+    app: './src/main.js'
+  }
+}
+//改为多入口
+var entries =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.js');
+module.exports = {
+  entry:entries
+}
+```
+- build/utils.js追加getEntries方法
+
+```
+//分别获取多页面的js和html路径
+exports.getEntries = function (globPath) {
+  var entries = {},basename, tmp, pathname;
+  glob.sync(globPath).forEach(function (entry) {
+    basename = path.basename(entry, path.extname(entry));
+    tmp = entry.split('/').splice(-4);
+    var pathsrc = tmp[0]+'/'+tmp[1];
+    if( tmp[0] == 'src' ){
+      pathsrc = tmp[1];
+    }
+    pathname = pathsrc + '/' + basename;
+    entries[pathname] = entry;
+  });
+  return entries;
+}
+```
+
+- build/webpack.dev.conf.js
+```
+//注释原来的单个html修改
+module.exports = merge(baseWebpackConfig, {
+  ...
+  plugins: [
+    ...
+    /*new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true
+    }),*/
+    ...
+  ]
+})
+```
+
+```
+//遍历多个html，把js插入多个html
+var pages =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.html');
+for (var pathname in pages) {
+  var conf = {
+    filename: pathname + '.html',
+    template: pages[pathname],
+    chunks: [pathname, 'vendors', 'manifest'],
+    inject: true
+  };
+  module.exports.plugins.push(new HtmlWebpackPlugin(conf));
+}
+```
+

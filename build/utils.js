@@ -1,7 +1,7 @@
 var path = require('path')
 var config = require('../config')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
-
+var glob = require('glob');
 exports.assetsPath = function (_path) {
   var assetsSubDirectory = process.env.NODE_ENV === 'production'
     ? config.build.assetsSubDirectory
@@ -68,4 +68,24 @@ exports.styleLoaders = function (options) {
     })
   }
   return output
+}
+
+//分别获取多页面的js和html路径
+exports.getEntries = function (globPath) {
+  var entries = {},basename, tmp, pathname;
+  glob.sync(globPath).forEach(function (entry) {
+    console.log("entry:"+entry)
+    basename = path.basename(entry, path.extname(entry));
+    console.log("basename:"+basename)
+    tmp = entry.split('/').splice(-4);
+    console.log("temp:"+tmp)
+    var pathsrc = tmp[0]+'/'+tmp[1];
+    if( tmp[0] == 'src' ){
+      pathsrc = tmp[1];
+    }
+    pathname = pathsrc + '/' + basename;
+    entries[pathname] = entry;
+  });
+  console.log(pathname)
+  return entries;
 }
