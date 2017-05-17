@@ -2,6 +2,8 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var isProduction = process.env.NODE_ENV === 'production'
 // 返回绝对路径
 var entries =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.js');
 function resolve (dir) {
@@ -21,7 +23,11 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src')
+      '@': resolve('src'),
+      'assets': resolve('src/assets'),
+      'js': resolve('src/assets/js'),
+      'components': resolve('src/assets/components'),
+      'scss': resolve('src/assets/scss')
     }
   },
   module: {
@@ -62,5 +68,17 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  plugins:[]
+}
+//获取views下所有子文件夹的.html文件
+var pages =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.html');
+for (var pathname in pages) {
+  var conf = {
+    filename: pathname + '.html',
+    template: pages[pathname],
+    chunks: [pathname, 'vendors', 'manifest'],
+    inject: true
+  };
+  module.exports.plugins.push(new HtmlWebpackPlugin(conf));
 }

@@ -3,7 +3,7 @@
 - 去掉根目录index.html
 - 去掉src下的router，App.vue，main.js
 
-改写
+改写的js包含
 - build/webpack.base.conf.js
 
 ```
@@ -22,21 +22,19 @@ module.exports = {
 - build/utils.js追加getEntries方法
 
 ```
-//分别获取多页面的js和html路径
+//分别获取多页面的js和html路径，剪裁moduleName作为key输出
 exports.getEntries = function (globPath) {
-  var entries = {},basename, tmp, pathname;
+  var entries = {}, tmp, pathname;
   glob.sync(globPath).forEach(function (entry) {
-    basename = path.basename(entry, path.extname(entry));
-    tmp = entry.split('/').splice(-4);
-    var pathsrc = tmp[0]+'/'+tmp[1];
-    if( tmp[0] == 'src' ){
-      pathsrc = tmp[1];
-    }
-    pathname = pathsrc + '/' + basename;
+    // 以moduelname作为文件名输出
+    tmp = entry.split('/').splice(-3,2);
+    // 以views/home输出,前台http://localhost:8080/views/home.html这样访问
+    pathname = tmp.join("/")
     entries[pathname] = entry;
   });
   return entries;
 }
+
 ```
 
 - build/webpack.dev.conf.js
@@ -56,7 +54,13 @@ module.exports = merge(baseWebpackConfig, {
 })
 ```
 
+- build/webpack.base.conf.js追加方法
 ```
+module.exports = {
+  entry:entries,
+  ...
+  plugins:[] // add
+}
 //遍历多个html，把js插入多个html
 var pages =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.html');
 for (var pathname in pages) {
@@ -70,3 +74,12 @@ for (var pathname in pages) {
 }
 ```
 
+- build／dev-server.js修改预览地址
+
+```
+var uri = 'http://localhost:' + port
+// 修改启动地址，免得每次都要输入
+var uri = 'http://localhost:' + port + '/' + config.moduleName + '/home.html'
+```
+
+大致上就这样吧

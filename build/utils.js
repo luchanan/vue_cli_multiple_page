@@ -70,22 +70,15 @@ exports.styleLoaders = function (options) {
   return output
 }
 
-//分别获取多页面的js和html路径
+//分别获取多页面的js和html路径，剪裁moduleName作为key输出
 exports.getEntries = function (globPath) {
-  var entries = {},basename, tmp, pathname;
+  var entries = {}, tmp, pathname;
   glob.sync(globPath).forEach(function (entry) {
-    console.log("entry:"+entry)
-    basename = path.basename(entry, path.extname(entry));
-    console.log("basename:"+basename)
-    tmp = entry.split('/').splice(-4);
-    console.log("temp:"+tmp)
-    var pathsrc = tmp[0]+'/'+tmp[1];
-    if( tmp[0] == 'src' ){
-      pathsrc = tmp[1];
-    }
-    pathname = pathsrc + '/' + basename;
+    // 以moduelname作为文件名输出
+    tmp = entry.split('/').splice(-3,2);
+    // 以views/home输出,前台http://localhost:8080/views/home.html这样访问
+    pathname = tmp.join("/")
     entries[pathname] = entry;
   });
-  console.log(pathname)
   return entries;
 }

@@ -3,7 +3,7 @@ var webpack = require('webpack')
 var config = require('../config')
 var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+//var HtmlWebpackPlugin = require('html-webpack-plugin')
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 
 // add hot-reload related code to entry chunks
@@ -33,13 +33,3 @@ module.exports = merge(baseWebpackConfig, {
     new FriendlyErrorsPlugin()
   ]
 })
-var pages =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.html');
-for (var pathname in pages) {
-  var conf = {
-    filename: pathname + '.html',
-    template: pages[pathname],
-    chunks: [pathname, 'vendors', 'manifest'],
-    inject: true
-  };
-  module.exports.plugins.push(new HtmlWebpackPlugin(conf));
-}
