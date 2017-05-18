@@ -8,7 +8,6 @@
 
 <script>
 import { i18n } from 'js/base'
-console.log(i18n)
 export default {
   data: () => ({
     path: '当前位置：'

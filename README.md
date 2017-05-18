@@ -1,14 +1,9 @@
-#### 技术栈
+#### 基于vue-cli 脚手架
 
-vue2.3.3+webpack2+scss
-
-功能：
-scss autoprefixer 
-.vue style标签前缀问题解释正确
-
-# test
-
-> A Vue.js project
+- vue2.3.3 + webpack2 + es6 + vuex2.3.1 + scss
+- 支持多页面router
+- 支持国际化
+- 使用axios异步方案
 
 ## Build Setup
 
@@ -34,5 +29,3 @@ npm run e2e
 # run all tests
 npm test
 ```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

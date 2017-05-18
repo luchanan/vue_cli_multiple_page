@@ -1,7 +1,6 @@
 <template>
   <div>
-    我的<br>
-    <router-link to='/collect'>collect</router-link>
+    collect
   </div>
 </template>
 
