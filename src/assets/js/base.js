@@ -1,4 +1,5 @@
-require('scss/common.scss')
+// require('scss/common.scss')
+import 'scss/common.scss'
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import VueRouter from 'vue-router'

@@ -4,6 +4,7 @@
 - 支持多页面router
 - 支持国际化
 - 使用axios异步方案
+- js文件import/require scss可以autoprefixer
 
 ## Build Setup
 
