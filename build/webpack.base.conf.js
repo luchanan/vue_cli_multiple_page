@@ -2,10 +2,7 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-var isProduction = process.env.NODE_ENV === 'production'
-// 返回绝对路径
-var entries =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.js');
+var entries = require('./entries').entriesJs
 function resolve (dir) {
   return path.join(__dirname, '..', dir)//得到的全部是\这样的绝对路径
 }
@@ -69,16 +66,5 @@ module.exports = {
       }
     ]
   },
-  plugins:[]
-}
-//获取views下所有子文件夹的.html文件
-var pages =  utils.getEntries(config.pathString.src+'/'+config.moduleName+'/**/**/*.html');
-for (var pathname in pages) {
-  var conf = {
-    filename: pathname + '.html',
-    template: pages[pathname],
-    chunks: [pathname, 'vendors', 'manifest'],
-    inject: true
-  };
-  module.exports.plugins.push(new HtmlWebpackPlugin(conf));
+  plugins: []
 }

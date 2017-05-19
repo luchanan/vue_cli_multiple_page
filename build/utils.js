@@ -1,7 +1,7 @@
 var path = require('path')
 var config = require('../config')
+var isProduction = process.env.NODE_ENV = 'production' ? true : false
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
-var glob = require('glob');
 exports.assetsPath = function (_path) {
   var assetsSubDirectory = process.env.NODE_ENV === 'production'
     ? config.build.assetsSubDirectory
@@ -29,7 +29,7 @@ exports.cssLoaders = function (options) {
       loaders.push({
         loader: loader + '-loader',
         options: Object.assign({}, loaderOptions, {
-          sourceMap: options.sourceMap
+          sourceMap: isProduction?false:options.sourceMap // build 的时候 postcss-loader会出现一些警告
         })
       })
     }
@@ -70,17 +70,4 @@ exports.styleLoaders = function (options) {
     })
   }
   return output
-}
-
-//分别获取多页面的js和html路径，剪裁moduleName作为key输出
-exports.getEntries = function (globPath) {
-  var entries = {}, tmp, pathname;
-  glob.sync(globPath).forEach(function (entry) {
-    // 以moduelname作为文件名输出
-    tmp = entry.split('/').splice(-3,2);
-    // 以views/home输出,前台http://localhost:8080/views/home.html这样访问
-    pathname = tmp.join("/")
-    entries[pathname] = entry;
-  });
-  return entries;
 }
