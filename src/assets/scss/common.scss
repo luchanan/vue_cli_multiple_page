@@ -1,9 +1,6 @@
-.flex_v_center{
-  align-items:center;
-}
-.flex_h_center{
-  justify-content:center;
-}
 body{
   background: #f3f5f8;
+  .flex_h_center{
+    justify-content:center;
+  }
 }

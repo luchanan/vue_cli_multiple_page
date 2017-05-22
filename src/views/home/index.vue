@@ -1,7 +1,19 @@
 <template>
 <div class="home">
-  <div class="title">
-    <div class="flex flex_h_center"><div>{{ path+$t("index.name") }}</div></div>
+  <div class="title v_center p100">
+      <div class="flex_item">
+        <div class="flex flex_h_center"><div>{{ path+$t("index.name") }}</div></div>
+        <fieldset>
+          <legend>网站地图</legend>
+          <ul>
+            <li>
+              <div class="flex">
+                <a href="center.html">我的</a>
+              </div>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
   </div>
 </div>
 </template>
@@ -22,9 +34,6 @@ export default {
   .title{
     .flex{
       display:flex;
-      .flex_item{
-        flex: 1;
-      }
     }
   }
 </style>
