@@ -53,6 +53,15 @@ Object.keys(proxyTable).forEach(function (context) {
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')())
 
+/*app.use(require('connect-history-api-fallback')({
+  rewrites: [
+    { from: /\/center\/index$/, to: '/views/center.html'},
+    { from: /\/center\/collect$/, to: '/views/center.html'},
+    { from: /\/destination$/, to: '/views/destination.html'},
+    { from: /\/destination\/search\/\*!/, to: '/views/destination.html'}
+  ]
+}))*/
+
 // serve webpack bundle output
 app.use(devMiddleware)
 

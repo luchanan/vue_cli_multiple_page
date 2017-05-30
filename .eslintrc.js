@@ -25,7 +25,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     // closed defined but never used
     'no-unused-vars': 0,
-    // 关闭空格检测
+    // 关闭缩进检测
     'indent': 0
   }
 }

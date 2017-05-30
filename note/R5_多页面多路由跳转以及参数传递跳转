@@ -1,0 +1,266 @@
+刚开始觉得多页面和他们各自设置的路由跳转是这样的，比如：
+#### center router :
+```
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      component: Index
+    },
+    {
+      path: '/collect',
+      component: Collect
+    }
+  ]
+})
+```
+#### destination router :
+```
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      component: Index
+    },
+    {
+      name: 'search',
+      path: '/search',
+      component: Search
+    }
+  ]
+})
+```
+
+### 以下是hash模式下说明如何模块与模块之间的跳转，当前模块传递参数给别的模块的实现
+
+- home/index.vue进入center模块(home这个模块没有设置路由规则)
+
+```
+<a href="center.html">我的</a>
+```
+
+然后url的地址是
+
+```
+http://localhost:8080/views/center.html#/
+```
+
+- center/index.vue进入center模块下的/collect
+
+```
+<router-link to='/collect'>collect</router-link>
+```
+
+然后url的地址是
+
+```
+http://localhost:8080/views/center.html#/collect
+```
+
+- center/index.vue进入desitination模块下的/search(带?参数的)
+
+```
+<a href="destination.html#/search?from=center">destination index</a>
+```
+
+此时的url地址是
+
+```
+http://localhost:8080/views/destination.html#/search?from=center
+```
+
+在desitination/search.vue获取上面的?参数
+```
+<script>
+  export default {
+    mounted () {
+      console.log(this.$route.query) // {from: "center"}
+    }
+  }
+</script>
+```
+
+- 在desitination/index.vue跳转到desitination/search.vue，使用另外一种传参方式
+
+```
+// desitination/index.vue
+<router-link :to="{ name: 'search', params: { keyword: 'h5' }}">search</router-link>
+```
+
+```
+// desitination/search.vue
+<script>
+  export default {
+    data: () => ({
+      msg: ''
+    }),
+    mounted () {
+      this.msg = this.$route.params // {"keyword": "h5"}
+    }
+  }
+</script>
+```
+
+### 使用history模式去实现上面的问题
+
+> 注意：使用mode: 'history'要结合服务器配置，否者刷新会404
+
+开发环境配置：dev-server.js
+
+```
+app.use(require('connect-history-api-fallback')({
+  rewrites: [
+    { from: /\/center\/index$/, to: '/views/center.html'},
+    { from: /\/center\/collect$/, to: '/views/center.html'},
+    { from: /\/destination$/, to: '/views/destination.html'},
+    { from: /\/destination\/search$/, to: '/views/destination.html'}
+  ]
+}))
+```
+
+假设模块center,desitination同时设置了各自的路由
+
+```
+// center router :
+const router = new VueRouter({
+  base: '/center',
+  mode: 'history',
+  routes: [
+    {
+      path: '/index',
+      component: Index
+    },
+    {
+      path: '/collect',
+      component: Collect
+    }
+  ]
+})
+```
+```
+// desitination router :
+const router = new VueRouter({
+  base: '/destination',
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      component: Index
+    },
+    {
+      name: 'search',
+      path: '/search',
+      component: Search
+    }
+  ]
+})
+```
+
+- home/index.vue进入center模块(home这个模块没有设置路由规则)
+
+```
+<a href="/center/index">我的</a>
+```
+
+然后url的地址是
+
+```
+http://localhost:8080/center/index
+```
+
+- center/index.vue进入center模块下的/collect
+
+```
+<router-link to='/collect'>collect</router-link>
+```
+
+然后url的地址是
+
+```
+http://localhost:8080/center/collect
+```
+
+- center/index.vue进入desitination模块下的/search(带?参数的)
+
+```
+<a href="/destination/search?from=center">destination index</a>
+```
+
+此时的url地址是
+
+```
+http://localhost:8080/destination/search?from=center
+```
+
+在desitination/search.vue获取上面的?参数
+```
+<script>
+  export default {
+    mounted () {
+      console.log(this.$route.query) // {"from": "center"}
+    }
+  }
+</script>
+```
+
+- 在desitination/index.vue跳转到desitination/search.vue，使用另外一种传参方式
+
+```
+// desitination/index.vue
+<router-link :to="{ name: 'search', params: { keyword: 'h5' }}">search</router-link>
+```
+
+```
+// desitination/search.vue
+<script>
+  export default {
+    data: () => ({
+      msg: ''
+    }),
+    mounted () {
+      this.msg = this.$route.params // {"keyword": "h5"}, hash和history这种方式在刷新的时候，参数没了
+    }
+  }
+</script>
+```
+
+针对上面使用<router-link :to="{ name: 'search', params: { keyword: 'h5' }}">search</router-link>跳转后刷新导致参数不见的问题解决：
+
+```
+// desitination router :
+const router = new VueRouter({
+  base: '/destination',
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      component: Index
+    },
+    {
+      name: 'search',
+      path: '/search/:keyword',
+      component: Search
+    }
+  ]
+})
+```
+也可以看到url的地址改变为：
+
+```
+http://localhost:8080/destination/search/h5
+```
+
+不过这样刷新会404，再改一下这个
+
+```
+app.use(require('connect-history-api-fallback')({
+  rewrites: [
+    ...
+    { from: /\/destination\/search/, to: '/views/destination.html'} // 去掉了$，但是这里遗留一个问题就是有一个或者多个参数可要可不要时，这里的参数的个数和路由参数对不上，页面就是空白的
+  ]
+}))
+```
+
+参考：
+- (yaoyao1987/vue-cli-multipage)[https://github.com/yaoyao1987/vue-cli-multipage/blob/master/src/module/index/index.js]
+- (HTML5 History 模式)[https://router.vuejs.org/zh-cn/essentials/history-mode.html]

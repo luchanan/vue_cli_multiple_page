@@ -1,10 +1,9 @@
 import { Vue, VueRouter } from 'js/base'
 import Index from './index.vue'
-import Collect from './collect.vue'
+import Search from './search.vue'
 
-// 模块/功能 router配置
 const router = new VueRouter({
-  // base: '/center',
+  // base: '/destination',
   // mode: 'history',
   routes: [
     {
@@ -12,8 +11,9 @@ const router = new VueRouter({
       component: Index
     },
     {
-      path: '/collect',
-      component: Collect
+      name: 'search',
+      path: '/search/:keyword',
+      component: Search
     }
   ]
 })
