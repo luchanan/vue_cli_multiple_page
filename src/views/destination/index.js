@@ -14,6 +14,10 @@ const router = new VueRouter({
       name: 'search',
       path: '/search/:keyword',
       component: Search
+    },
+    {
+      path: '*',
+      redirect: '/' // 输入其他不存在的地址自动跳回首页
     }
   ]
 })
