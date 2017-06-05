@@ -4,7 +4,7 @@
       <div class="flex_item">
         <div class="flex flex_h_center"><div>{{ path+$t("index.name") }}</div></div>
         <fieldset>
-          <legend><i class="iconfont icon-birthday"></i>网站地图</legend>
+          <legend><i class="iconfont icon-birthday"></i>网站</legend>
           <ul>
             <li>
               <div class="flex">
